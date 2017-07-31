@@ -11,14 +11,59 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 
+#include <signal.h>
+
 const int PORT = 8181;
-bool verbose = -1;
+bool verbose = false;
+bool mustKill = false;
 
 void help() {
 	puts("CHATTY");
 	puts("-h,--h \t \t \t Displays this help page");
 	puts("-v,--v \t \t \t Turns on verbose mode");
 	puts("");
+}
+void sigHandler(int signal) {
+	printf("Called sigHandler with signal: %d and verbose: %d\n", signal, verbose);
+	if (verbose) {
+		printf("Recieved signal: %d\n", signal);
+	}
+	switch (signal) {
+		case SIGHUP:
+			if (verbose) puts("Requested hangup, ignoring.");
+			break;
+		case SIGINT:
+			if (verbose) puts("Recieved intterupt request, killing server");
+			mustKill = true;
+			break;
+		case SIGTERM:
+			if (verbose) puts("Requested termination, killing server");
+			mustKill = true;
+			break;
+		case SIGQUIT:
+			if (verbose) puts("Requested quit, killing server");
+			mustKill = true;
+			break;
+		case SIGTSTP:
+			if (verbose) puts("Terminal requested stop, killing server");
+			mustKill = true;
+			break;
+		default:
+			if (verbose) printf("Unknown signal %d\n", signal);
+			break;
+	}
+}
+
+void setupSignals() {
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = sigHandler;
+	sigaction(SIGTERM, &action, NULL);
+	sigaction(SIGHUP, &action, NULL);
+	sigaction(SIGQUIT, &action, NULL);
+	sigaction(SIGTSTP, &action, NULL);
+	sigaction(SIGINT, &action, NULL);
+	mustKill = false;
 }
 
 int setup(bool verbose) {
@@ -79,14 +124,17 @@ int main(int argc, char** argv) {
 		int i = 1;
 		for (i = 1; i < argc; i++) {
 			//printf("%d = %s\n", i, argv[i]);
-			if (strcmp(argv[i], "-h") || strcmp(argv[i], "-h")) {
+			if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--h") == 0) {
 				help();
+				return -1;
 			}
-			if (strcmp(argv[i], "-v") || strcmp(argv[i], "-v")) {
+			if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--v") == 0) {
 				verbose = true;
+				puts("Verbose turned on");
 			}
 		}
 	}
+	setupSignals();
 	puts("Chatty starting up!");
 	int sock = setup(verbose);
 	
@@ -120,4 +168,5 @@ int main(int argc, char** argv) {
 	
 	//Close socket for further experimentation
 	close(sock);
+	return 1;
 }
