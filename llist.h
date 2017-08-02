@@ -1,17 +1,23 @@
+#ifndef _LLIST_H__
+
+#include <stdbool.h>
+
+#define _LLIST_H__
+
 //Singly Linked Node
-typedef struct node {
-	struct node *next;
+typedef struct nodeT {
+	struct nodeT *next;
 	char *message;
 	char *sender;
-	int timestamp;
+	long timestamp;
 	long id;
-} node;
+} Node;
 
-typedef struct list {
-	struct node *head;
-	struct node *tail;
+typedef struct listT {
+	Node *head;
+	Node *tail;
 	//Array of Steps within LL
-	struct node **nodeArr;
+	Node **nodeArr;
 	//Count of in Array
 	long arrCount;
 	//Count of Allocated Locations
@@ -22,12 +28,14 @@ typedef struct list {
 	long listLength;
 	//Distance between each node in the Array
 	int stepCount;
-} list;
+} List;
 
 
-node *createNode(char* message, char* sender, int timestamp, long id);
-bool freeNode(node* Node);
+Node *createNode(char* message, char* sender, long timestamp, long id);
+bool freeNode(Node* node);
 
-list *createList();
-bool freeList(list* List);
-node *add(node *Node, list* List);
+List *createList();
+bool freeList(List* list);
+Node *add(Node *node, List* list);
+
+#endif

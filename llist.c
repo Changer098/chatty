@@ -1,11 +1,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include "llist.h"
 
-node *createNode(char* message, char* sender, int timestamp, long id) {
-	node *newNode = (node*)malloc(sizeof(node));
+Node *createNode(char* message, char* sender, long timestamp, long id) {
+	Node *newNode = (Node*)malloc(sizeof(Node));
 	newNode->message = message;
 	newNode->sender = sender;
 	newNode->timestamp = timestamp;;
@@ -15,43 +14,44 @@ node *createNode(char* message, char* sender, int timestamp, long id) {
 }
 
 //Returns false if error
-bool freeNode(node* Node) {
-	if (Node == NULL) {
+bool freeNode(Node* node) {
+	if (node == NULL) {
 		puts("llist::freeNode() recieved a NULL argument");
 		return false;
 	}
 	else {
-		if (Node->message != NULL) {
-			free(Node->message);
+		if (node->message != NULL) {
+			free(node->message);
 		}
-		if (Node->sender != NULL) {
-			free(Node->sender);
+		if (node->sender != NULL) {
+			free(node->sender);
 		}
-		free(Node);
+		free(node);
 		return true;
 	}
 }
 
-list *createList() {
-	list *newList = (list*)malloc(sizeof(list));
+List *createList() {
+	List *newList = (List*)malloc(sizeof(List));
 	newList->head = NULL;
 	newList->tail = NULL;
-	newList->nodeArr = (node**)malloc(sizeof(node) * 10);
+	newList->nodeArr = (Node**)malloc(sizeof(Node) * 10);
 	newList->arrCount = 0;
 	newList->arrSize = 10;
 	newList->lastId = -1;
 	newList->listLength = 0;
+	return newList;
 }
 
 //Returns false if an error occurred
-bool freeList(list* List) {
+bool freeList(List* list) {
 	/* 
 		TODO
 	*/
 	return false;
 }
 
-bool quickFreeList(list* List) {
+bool quickFreeList(List* list) {
 	/*
 		TODO
 	*/
@@ -59,24 +59,24 @@ bool quickFreeList(list* List) {
 }
 
 //return true if Contains || false if not
-bool ContainsId(list *List, long id) {
-	if (List == NULL) { 
+bool ContainsId(List *list, long id) {
+	if (list == NULL) { 
 		return false;
 	}
-	if (List->head == NULL) {
+	if (list->head == NULL) {
 		return false;
 	}
-	if (List->tail == NULL) {
+	if (list->tail == NULL) {
 		return false;
 	}
-	if (List->listLength == 0) {
+	if (list->listLength == 0) {
 		return false;
 	}
 	if (id < 0) { 
 		return false;
 	}
 	bool doLoop = true, firstRun = true;
-	int indexLeft = 0, indexRight = List->arrCount;
+	int indexLeft = 0, indexRight = list->arrCount;
 	do {
 		//do left then right
 		//RULES
@@ -89,16 +89,16 @@ bool ContainsId(list *List, long id) {
 	return false;
 }
 
-node *add(node *Node, list *List) {
-	if (Node == NULL) {
+Node *add(Node *node, List *list) {
+	if (node == NULL) {
 		puts("llist::add() Tried to add a NULL node");
 	}
-	else if (List == NULL) {
+	else if (list == NULL) {
 		puts("llist::add() Tried to add a node to a NULL list");
 	}
 	else {
-		List->tail->next = Node;
-		List->tail = Node;
+		list->tail->next = node;
+		list->tail = node;
 		
 		/*
 			TODO:
@@ -107,9 +107,9 @@ node *add(node *Node, list *List) {
 }
 
 //Auxilary function to search through a node to find a matching id
-node * __search(node *Node, long id) {
-	node *currNode = Node;
-	node *nextNode = Node;
+Node * __search(Node *node, long id) {
+	Node *currNode = node;
+	Node *nextNode = node;
 	while (nextNode != NULL && currNode != NULL) {
 		if (currNode->id == id) {
 			return currNode;

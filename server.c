@@ -12,6 +12,8 @@
 #include <stdbool.h>
 
 #include <signal.h>
+#include "llist.h"
+#include "user.h"
 
 const int PORT = 8181;
 bool verbose = false;
