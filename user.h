@@ -8,7 +8,7 @@
 typedef struct userT {
 	char* name;
 	char* password;
-	long cookie;
+	unsigned long cookie;
 	long timestamp;		//if exceeded too long, user is logged out
 	Node* messages;		//Linked list
 	int messageCount;

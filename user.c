@@ -1,11 +1,28 @@
 #include <time.h>
 #include "user.h"
 #include "llist.h"
+#include "helpers.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 User *createUser(char* name, char* password) {
-	return (User*)malloc(sizeof(User));
+	if (name == NULL) {
+		puts("createUser() recieved a NULL name parameter");
+		return NULL;
+	}
+	if (password == NULL) {
+		puts("createUser() recieved a NULL password parameter");
+		return NULL;
+	}
+	User *user = (User*)malloc(sizeof(User));
+	user->name = name;
+	user->password = password;
+	user->timestamp - (long)time(NULL);
+	user->messages = NULL;
+	user->messageCount = 0
+	user->cookie = randomLong();
+	
+	return user;
 }
 bool isLoggedIn(User* user){
 	if (user == NULL) {
