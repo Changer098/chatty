@@ -19,7 +19,7 @@ User *createUser(char* name, char* password) {
 	user->password = password;
 	user->timestamp - (long)time(NULL);
 	user->messages = NULL;
-	user->messageCount = 0
+	user->messageCount = 0;
 	user->cookie = randomLong();
 	
 	return user;

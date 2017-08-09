@@ -14,8 +14,10 @@
 #include <signal.h>
 #include "llist.h"
 #include "user.h"
+#incude "helpers.h"
 
 const int PORT = 8181;
+const int BUFFERSIZE = 2048;
 bool verbose = false;
 bool mustKill = false;
 
@@ -121,6 +123,19 @@ int setup(bool verbose) {
 	return sock;
 }
 
+void handle(int sock) {
+	char buff[BUFFERSIZE];
+	memset(buff, 0, BUFFERSIZE);
+	int recieved = recv(sock, &buff, BUFFERSIZE, 0);
+	if (recieved <= 0) {
+		puts("Recieved an empty message!");
+		close(sock);
+		return;
+	}
+	//parse headers
+	
+}
+
 int main(int argc, char** argv) {
 	if (argc > 1) {
 		int i = 1;
@@ -151,11 +166,13 @@ int main(int argc, char** argv) {
 		else {
 			printf("accept() was successfull with descriptor %d\n", newSock);
 		}
+		handle(newSock);
 		//try and read data
-		char buff[1024];
+		/*char buff[1024];
 		int recieved = recv(newSock, &buff, 1024, 0);
-		printf("recieved %s\n", buff);
+		printf("recieved %s\n", buff);*/
 		
+		/*
 		//Send Hello World back to the browser (testing in FF)
 		char* message = "Hello world!";
 		if (send(newSock, message, 12, 0) == -1) {
@@ -163,8 +180,7 @@ int main(int argc, char** argv) {
 		}
 		else {
 			puts("Successfully sent Hello World!");
-		}
-		close(newSock);
+		}*/
 	}
 	
 	
