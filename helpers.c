@@ -139,3 +139,23 @@ char* substring(char* message, int start, int end) {
 	}
 	return string;
 }
+bool isLenZero(char *message) {
+	if (message == NULL) {
+		return true;
+	}
+	if (message[0] != 0) {
+		return false;
+	}
+	return true;
+}
+//Modified version of sdbm from http://www.cse.yorku.ca/~oz/hash.html
+unsigned long checksum(char *string) {
+	int mod = 65535;
+	unsigned long hash = 0;
+	int c;
+	
+	while (c = *string++) {
+		hash = c + (hash << 6) + (hash << 16) - hash;
+	}
+	return hash % mod;
+}
